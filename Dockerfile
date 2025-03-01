@@ -16,20 +16,34 @@ RUN apt-get update && apt-get install -y \
     wget \
     python3 \
     python3-pip \
+    # Folly dependencies (but not Folly itself as we build it from source)
+    libfmt-dev \
+    libgflags-dev \
+    libgoogle-glog-dev \
+    libevent-dev \
+    libdouble-conversion-dev \
+    libboost-all-dev \
+    liblz4-dev \
+    liblzma-dev \
+    libzstd-dev \
+    libsnappy-dev \
+    libssl-dev \
+    libbz2-dev \
+    libunwind-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Folly from source (since it might not be available in package repos)
+# Install FastFloat (required by Folly)
 WORKDIR /tmp
-RUN git clone https://github.com/facebook/folly.git \
-    && cd folly \
-    && mkdir build \
+RUN git clone https://github.com/fastfloat/fast_float.git \
+    && cd fast_float \
+    && mkdir -p build \
     && cd build \
     && cmake .. \
-    && make -j$(nproc) \
     && make install \
     && cd /tmp \
-    && rm -rf folly
+    && rm -rf fast_float
+
 
 # Set up workspace directory
 WORKDIR /agents-cpp

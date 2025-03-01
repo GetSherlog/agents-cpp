@@ -67,7 +67,7 @@ target_link_libraries(agents-cpp PUBLIC
     Threads::Threads
     ${CURL_LIBRARIES}
     ${Boost_LIBRARIES}
-    Folly::folly
+    folly
     gflags
     glog::glog
     fmt::fmt
