@@ -65,10 +65,10 @@ private:
     
     // CAF dependencies commented out until available
     // Actor for the workflow controller
-    // caf::actor controller_actor_;
+    caf::actor controller_actor_;
     
     // Setup actor roles for this workflow
-    // void setupActorSystem() override;
+    void setupActorSystem() override;
 };
 
 } // namespace workflows

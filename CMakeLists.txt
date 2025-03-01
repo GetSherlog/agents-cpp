@@ -47,13 +47,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(spdlog)
 
-# Boost for various utilities
-FetchContent_Declare(
-    Boost
-    GIT_REPOSITORY https://github.com/boostorg/boost.git
-    GIT_TAG boost-1.84.0
-)
-set(BOOST_INCLUDE_LIBRARIES 
+# Use system-installed Boost instead of building from source
+find_package(Boost 1.74.0 REQUIRED COMPONENTS 
     context
     filesystem
     system
@@ -61,39 +56,27 @@ set(BOOST_INCLUDE_LIBRARIES
     program_options
     regex
 )
-set(BOOST_ENABLE_CMAKE ON)
-FetchContent_MakeAvailable(Boost)
+include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
 
-# Dependencies for Folly
+# Use system-installed Folly
+find_package(folly REQUIRED)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 find_package(fmt REQUIRED)
 find_package(ZLIB REQUIRED)
-find_library(EVENT_LIBRARY event)
-find_library(EVENT_CORE_LIBRARY event_core)
-find_library(EVENT_EXTRA_LIBRARY event_extra)
-find_library(EVENT_SSL_LIBRARY event_ssl)
-find_library(EVENT_PTHREADS_LIBRARY event_pthreads)
-
-# Folly for coroutines and async functionality
-FetchContent_Declare(
-    folly
-    GIT_REPOSITORY https://github.com/facebook/folly.git
-    GIT_TAG v2024.03.25.00
-)
-FetchContent_MakeAvailable(folly)
+find_package(double-conversion REQUIRED)
 
 # CAF (C++ Actor Framework) for actor-based concurrency
-# Commented out until we have proper support for it
-# FetchContent_Declare(
-#     caf
-#     GIT_REPOSITORY https://github.com/actor-framework/actor-framework.git
-#     GIT_TAG 0.19.3
-# )
-# set(CAF_ENABLE_EXAMPLES OFF CACHE INTERNAL "")
-# set(CAF_ENABLE_TESTING OFF CACHE INTERNAL "")
-# set(CAF_ENABLE_TOOLS OFF CACHE INTERNAL "")
-# FetchContent_MakeAvailable(caf)
+FetchContent_Declare(
+    caf
+    GIT_REPOSITORY https://github.com/actor-framework/actor-framework.git
+    GIT_TAG 0.19.3
+)
+set(CAF_ENABLE_EXAMPLES OFF CACHE INTERNAL "")
+set(CAF_ENABLE_TESTING OFF CACHE INTERNAL "")
+set(CAF_ENABLE_TOOLS OFF CACHE INTERNAL "")
+FetchContent_MakeAvailable(caf)
 
 # Add library targets
 add_subdirectory(src)

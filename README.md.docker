@@ -1,0 +1,123 @@
+# Docker Setup for Agents-CPP
+
+This document explains how to use the Docker setup to build and run the Agents-CPP project in a consistent environment, avoiding platform-specific build issues.
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/) (usually included with Docker Desktop)
+
+## Getting Started
+
+The Docker setup includes:
+
+1. `Dockerfile` - Defines the container environment with all required dependencies
+2. `docker-compose.yml` - Simplifies container management
+3. `docker-run.sh` - Convenience script for common operations
+4. `.dockerignore` - Optimizes Docker context by excluding unnecessary files
+
+## Quick Start
+
+1. Build the Docker image:
+   ```bash
+   ./docker-run.sh build
+   ```
+
+2. Build the C++ project inside the container:
+   ```bash
+   ./docker-run.sh build-proj
+   ```
+
+3. Run an example:
+   ```bash
+   ./docker-run.sh example simple_agent
+   ```
+
+## Available Commands
+
+The `docker-run.sh` script provides several commands:
+
+- `build` - Build the Docker image
+- `run` - Run the container with an interactive shell
+- `exec [command]` - Execute a command in the running container
+- `build-proj` - Build the C++ project inside the container
+- `example [name]` - Run a specified example
+- `clean` - Remove container and volume
+- `help` - Show help message
+
+## Development Workflow
+
+For active development:
+
+1. Make changes to the source code on your host machine
+2. Rebuild the project in the container:
+   ```bash
+   ./docker-run.sh build-proj
+   ```
+3. Run your code:
+   ```bash
+   ./docker-run.sh example your_example
+   ```
+
+The source code directory is mounted as a volume, so changes are automatically visible inside the container.
+
+## Environment Variables
+
+The `.env` file is mounted into the container, so API keys and other configuration defined there will be available to your application inside the container.
+
+## Customizing the Docker Setup
+
+### Adding Dependencies
+
+If you need additional dependencies:
+
+1. Edit the `Dockerfile` to add required packages
+2. Rebuild the Docker image:
+   ```bash
+   ./docker-run.sh build
+   ```
+
+### Modifying Build Parameters
+
+Build parameters can be adjusted in the `docker-compose.yml` file.
+
+## Troubleshooting
+
+### Build Failures
+
+If the build fails inside the container:
+
+1. Enter the container with a shell:
+   ```bash
+   ./docker-run.sh run
+   ```
+2. Navigate to the build directory:
+   ```bash
+   cd /agents-cpp/build
+   ```
+3. Run CMake with verbose output:
+   ```bash
+   cmake -DCMAKE_VERBOSE_MAKEFILE=ON ..
+   make
+   ```
+
+### Permission Issues
+
+If you encounter permission issues with mounted volumes:
+
+```bash
+# Find your user ID and group ID
+id -u
+id -g
+
+# Then edit the Dockerfile to add a user with matching IDs
+```
+
+### Container Can't Find Libraries
+
+If the container can't find libraries at runtime:
+
+```bash
+# Inside the container
+ldconfig
+``` 

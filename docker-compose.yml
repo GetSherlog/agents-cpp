@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  agents-cpp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Mount the source code for development
+      - .:/agents-cpp
+      # Mount a separate volume for build files to improve performance
+      - agents_cpp_build:/agents-cpp/build
+    env_file:
+      - .env
+    # Keep the container running
+    tty: true
+    stdin_open: true
+    # Command to run when container starts - can be overridden via CLI
+    command: /bin/bash
+
+volumes:
+  agents_cpp_build: 

@@ -4,7 +4,7 @@
 #include <agents-cpp/llm_interface.h>
 
 // Comment out CAF includes to allow building without the actor framework
-// #include <caf/all.hpp>
+#include <caf/all.hpp>
 
 namespace agents {
 namespace workflows {
@@ -45,7 +45,7 @@ protected:
     std::shared_ptr<LLMInterface> llm_;
     
     // Create and configure the actor system - commented out until CAF is available
-    /*
+    
     // CAF actor system
     std::unique_ptr<caf::actor_system> actor_system_;
     
@@ -53,7 +53,7 @@ protected:
     caf::actor workflow_actor_;
     
     virtual void setupActorSystem();
-    */
+    
 };
 
 } // namespace workflows

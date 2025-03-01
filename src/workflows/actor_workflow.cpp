@@ -5,7 +5,7 @@ namespace agents {
 namespace workflows {
 
 // CAF dependencies commented out until the library is available
-/*
+
 // Define actor types and messages
 using workflow_actor_type = caf::typed_actor<
     caf::replies_to<JsonObject>::with<JsonObject>,
@@ -38,13 +38,16 @@ workflow_actor_type::behavior_type baseWorkflowBehavior(workflow_actor_type::sta
         }
     };
 }
-*/
+
 
 // Constructor
 ActorWorkflow::ActorWorkflow(std::shared_ptr<AgentContext> context)
     : Workflow(context) {
     // Get LLM from context if available
     llm_ = context->getLLM();
+    
+    // Setup the actor system
+    setupActorSystem();
 }
 
 // Destructor
@@ -54,25 +57,24 @@ ActorWorkflow::~ActorWorkflow() {
 
 // Initialize the workflow
 void ActorWorkflow::init() {
-    // Simplified implementation without CAF
-    spdlog::debug("Actor workflow initialized (CAF disabled)");
+    spdlog::debug("Actor workflow initialized (using CAF)");
+    
+    // Send initialize message to the workflow actor
+    caf::anon_send(workflow_actor_, initialize_atom_v);
 }
 
 // Execute the workflow with input (renamed to run to match base class)
 JsonObject ActorWorkflow::run(const String& input) {
-    // Simplified implementation without CAF
     spdlog::debug("Running actor workflow with input: {}", input);
     
     try {
-        // Basic implementation - simply return the input as JSON
-        // In a real implementation, this would perform the workflow logic
-        if (llm_) {
-            // If LLM is available, we can use it for a simple response
-            auto response = llm_->complete(input);
-            return {{"result", response.content}};
-        }
+        // Create input JSON
+        JsonObject input_json = {{"input", input}};
         
-        return {{"input", input}};
+        // Process through actor and wait for result
+        auto result = caf::request_receive<JsonObject>(*actor_system_, workflow_actor_, input_json);
+        
+        return result;
     } catch (const std::exception& e) {
         spdlog::error("Exception executing workflow: {}", e.what());
         return {{"error", e.what()}};
@@ -81,16 +83,20 @@ JsonObject ActorWorkflow::run(const String& input) {
 
 // Stop the workflow
 void ActorWorkflow::stop() {
-    // Simplified implementation without CAF
-    spdlog::debug("Actor workflow stopped (CAF disabled)");
+    spdlog::debug("Actor workflow stopped (using CAF)");
+    
+    // Send stop message to the workflow actor
+    if (actor_system_ && workflow_actor_) {
+        caf::anon_send(workflow_actor_, stop_atom_v);
+    }
 }
 
 // Get the workflow status
 String ActorWorkflow::getStatus() const {
-    return "Running (CAF disabled)";
+    return "Running (using CAF)";
 }
 
-/*
+
 // Create and configure the actor system
 void ActorWorkflow::setupActorSystem() {
     if (!actor_system_) {
@@ -104,7 +110,6 @@ void ActorWorkflow::setupActorSystem() {
         workflow_actor_ = actor_system_->spawn(baseWorkflowBehavior);
     }
 }
-*/
 
 } // namespace workflows
 } // namespace agents 

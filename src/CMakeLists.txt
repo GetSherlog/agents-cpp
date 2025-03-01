@@ -66,8 +66,15 @@ target_link_libraries(agents-cpp PUBLIC
     spdlog::spdlog
     Threads::Threads
     ${CURL_LIBRARIES}
+    ${Boost_LIBRARIES}
+    Folly::folly
+    gflags
+    glog::glog
+    fmt::fmt
+    ZLIB::ZLIB
+    double-conversion::double-conversion
     # CAF dependencies commented out until it's properly supported
-    # caf_core caf_io
+    caf_core caf_io
 )
 
 # Install targets

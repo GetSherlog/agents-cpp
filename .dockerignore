@@ -1,0 +1,22 @@
+# Git
+.git
+.gitignore
+
+# Build directories
+build/
+out/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files (these will be mounted at runtime)
+.env
+
+# Other
+docs/
+README.md
+LICENSE
+.dockerignore 
